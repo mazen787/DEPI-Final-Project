@@ -42,14 +42,14 @@ KIDNEY-PROJECT/
 
 ### Prerequisites
 
-  * Python 3.10+
-  * [Poetry](https://www.google.com/search?q=https://python-poetry.org/docs/%23installation) installed.
+    * Python 3.10+
+    * [Poetry](https://python-poetry.org/docs/#installation) installed.
 
 ### 1\. Clone the repository
 
 ```bash
-git clone [https://github.com/mazen787/kidney-project.git](https://github.com/mazen787/kidney-project.git)
-cd kidney-project
+git clone https://github.com/mazen787/DEPI-Final-Project.git
+cd DEPI-Final-Project
 ```
 
 ### 2\. Install Dependencies
