@@ -22,6 +22,7 @@ KIDNEY-PROJECT/
 ├── notebooks/              # Jupyter notebooks for experimentation and EDA
 ├── src/                    # Source code for data processing and training
 │   ├── __init__.py
+│   ├── dashboard.py        # Analytics dashboard module
 │   ├── preprocessing.py    # Preprocessing pipeline
 │   └── train.py            # Model training script
 │
