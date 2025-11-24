@@ -31,7 +31,7 @@ KIDNEY-PROJECT/
 ├── pyproject.toml          # Poetry dependencies configuration
 ├── poetry.lock             # Frozen dependencies versions
 └── README.md               # Project documentation
-
+ ```
 ## 🛠️ Installation & Setup
 
 ### Prerequisites
