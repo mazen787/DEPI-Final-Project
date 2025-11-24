@@ -1,0 +1,18 @@
+# Python junk
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environment
+.env
+.venv
+env/
+venv/
+ENV/
+
+# IDE settings
+.vscode/
+.idea/
+
+# Mac junk
+.DS_Store
