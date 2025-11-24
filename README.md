@@ -1,11 +1,6 @@
-````markdown
 # 🏥 Kidney Disease Prediction System
 
-![Python](https://img.shields.io/badge/Python-3.10-blue)
-![Poetry](https://img.shields.io/badge/Poetry-Managed-blue)
-![Streamlit](https://img.shields.io/badge/Streamlit-App-FF4B4B)
-![Docker](https://img.shields.io/badge/Docker-Ready-2496ED)
-![Status](https://img.shields.io/badge/Status-Production-success)
+![Python](https://img.shields.io/badge/Python-3.10-blue) ![Poetry](https://img.shields.io/badge/Poetry-Managed-blue) ![Streamlit](https://img.shields.io/badge/Streamlit-App-FF4B4B) ![Docker](https://img.shields.io/badge/Docker-Ready-2496ED) ![Status](https://img.shields.io/badge/Status-Production-success)
 
 ## 📌 Overview
 This project is a Machine Learning application designed to predict the risk of **Chronic Kidney Disease (CKD)** based on patient physiological data and lab results. 
@@ -36,7 +31,6 @@ KIDNEY-PROJECT/
 ├── pyproject.toml          # Poetry dependencies configuration
 ├── poetry.lock             # Frozen dependencies versions
 └── README.md               # Project documentation
-````
 
 ## 🛠️ Installation & Setup
 
@@ -136,5 +130,5 @@ The application is fully dockerized for easy deployment.
 
 This project is licensed under the MIT License.
 
-```
-```
+```MIT License
+Copyright (c) 2024 Mazen 
