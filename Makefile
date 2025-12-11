@@ -1,8 +1,8 @@
 install:
-	pip install -r requirements.txt
+	poetry install
 
 run:
-	streamlit run app.py
+	poetry run streamlit run app.py
 
 docker-build:
 	docker build -t kidney-app .

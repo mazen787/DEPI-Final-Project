@@ -1,17 +1,26 @@
 import pandas as pd
 import numpy as np
 
-# 1. Define the top 15 features selected for the model
-# These are used during both training and inference (in the Streamlit app)
+# src/preprocessing.py
+
 TOP_15_FEATURES = [
-    'Sodium level (mEq/L)', 'Estimated Glomerular Filtration Rate (eGFR)',
-    'Blood urea (mg/dl)', 'Potassium level (mEq/L)', 'Urine output (ml/day)',
-    'White blood cell count (cells/cumm)', 'Serum creatinine (mg/dl)',
-    'C-reactive protein (CRP) level', 'Interleukin-6 (IL-6) level',
-    'Parathyroid hormone (PTH) level', 'Serum albumin level',
-    'Urine protein-to-creatinine ratio', 'Serum calcium level',
-    'Random blood glucose level (mg/dl)', 'Cystatin C level'
+    'Urine protein-to-creatinine ratio',
+    'Serum creatinine (mg/dl)',
+    'Estimated Glomerular Filtration Rate (eGFR)',
+    'Cystatin C level',
+    'Albumin in urine',
+    'Interleukin-6 (IL-6) level',
+    'Urinary sediment microscopy results',  # جديد
+    'Blood urea (mg/dl)',
+    'Red blood cells in urine',             # جديد
+    'Parathyroid hormone (PTH) level',
+    'Pus cells in urine',                   # جديد
+    'C-reactive protein (CRP) level',
+    'Coronary artery disease (yes/no)',     # جديد
+    'Blood pressure (mm/Hg)',               # جديد
+    'Appetite (good/poor)'                  # جديد
 ]
+
 
 def preprocess_data(df):
     """

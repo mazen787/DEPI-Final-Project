@@ -14,93 +14,132 @@ from src.preprocessing import preprocess_data
 st.set_page_config(page_title="Kidney Disease AI", layout="wide")
 
 st.title("🏥 Kidney Disease Prediction System")
-st.markdown("Enter the patient's lab results below to analyze the risk of Chronic Kidney Disease.")
+st.markdown("Enter the patient's lab results below to analyze the risk of Chronic Kidney Disease (CKD).")
 
 # 2. Load Model and Feature Names
-@st.cache_resource # Cache the model to optimize performance (load once)
+@st.cache_resource # Cache the model to optimize performance
 def load_resources():
-    model = joblib.load('models/kidney_model.joblib')
-    with open('models/model_features.json', 'r') as f:
-        feature_names = json.load(f)
-    return model, feature_names
+    try:
+        model = joblib.load('models/kidney_model.joblib')
+        with open('models/model_features.json', 'r') as f:
+            feature_names = json.load(f)
+        return model, feature_names
+    except FileNotFoundError:
+        return None, None
 
-try:
-    model, feature_names = load_resources()
-except FileNotFoundError:
-    st.error("Error: Model files not found. Please run 'python src/train.py' first.")
+model, feature_names = load_resources()
+
+if model is None:
+    st.error("🚨 Error: Model files not found! Please run 'python src/train.py' first.")
     st.stop()
 
-# 3. Input Form (prevents prediction until button is pressed)
+# 3. Input Form (Updated for New Top 15 Features)
 with st.form("prediction_form"):
-    st.header("Patient Lab Results")
+    st.header("📝 Patient Data Entry")
     
-    # Create a two-column layout for better UI
-    col1, col2 = st.columns(2)
+    # --- Section 1: Urine Analysis (The most critical indicators now) ---
+    st.subheader("1. Urine Analysis Results")
+    col1, col2, col3 = st.columns(3)
     
     with col1:
-        st.subheader("Blood & Inflammation")
-        wbc = st.number_input("White blood cell count (cells/cumm)", min_value=0.0, value=8000.0)
-        crp = st.number_input("C-reactive protein (CRP) level", min_value=0.0, value=5.0)
-        il6 = st.number_input("Interleukin-6 (IL-6) level", min_value=0.0, value=2.0)
-        glucose = st.number_input("Random blood glucose level (mg/dl)", min_value=0.0, value=100.0)
-        
-        st.subheader("Kidney Function Tests")
-        egfr = st.number_input("Estimated Glomerular Filtration Rate (eGFR)", min_value=0.0, value=90.0)
-        creatinine = st.number_input("Serum creatinine (mg/dl)", min_value=0.0, value=1.0)
-        urea = st.number_input("Blood urea (mg/dl)", min_value=0.0, value=30.0)
-        cystatin = st.number_input("Cystatin C level", min_value=0.0, value=0.8)
-
+        protein_ratio = st.number_input("Urine Protein-to-Creatinine Ratio", min_value=0.0, max_value=10.0, value=0.2, step=0.1, help="Normal range is typically < 0.2")
+        albumin_urine = st.selectbox("Albumin in Urine", options=[0, 1, 2, 3, 4, 5], help="0=None, 1=Trace, 2-5=Levels")
+    
     with col2:
-        st.subheader("Electrolytes")
-        sodium = st.number_input("Sodium level (mEq/L)", min_value=0.0, value=140.0)
-        potassium = st.number_input("Potassium level (mEq/L)", min_value=0.0, value=4.0)
-        calcium = st.number_input("Serum calcium level", min_value=0.0, value=9.0)
-        pth = st.number_input("Parathyroid hormone (PTH) level", min_value=0.0, value=40.0)
+        urine_sediment = st.selectbox("Urinary Sediment Microscopy", options=["normal", "abnormal"])
+        pus_cells = st.selectbox("Pus Cells in Urine", options=["normal", "abnormal"])
+    
+    with col3:
+        rbc_urine = st.selectbox("Red Blood Cells (Urine)", options=["normal", "abnormal"])
 
-        st.subheader("Urine Analysis")
-        urine_output = st.number_input("Urine output (ml/day)", min_value=0.0, value=1500.0)
-        albumin = st.number_input("Serum albumin level", min_value=0.0, value=4.0)
-        protein_ratio = st.number_input("Urine protein-to-creatinine ratio", min_value=0.0, value=0.1)
+    st.markdown("---")
+
+    # --- Section 2: Kidney Function & Blood ---
+    st.subheader("2. Kidney Function & Blood Tests")
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        creatinine = st.number_input("Serum Creatinine (mg/dl)", min_value=0.0, max_value=20.0, value=0.9, step=0.1)
+        egfr = st.number_input("eGFR", min_value=0.0, max_value=150.0, value=100.0, step=1.0)
+    
+    with col2:
+        cystatin = st.number_input("Cystatin C level (mg/l)", min_value=0.0, max_value=10.0, value=0.8, step=0.1)
+        urea = st.number_input("Blood Urea (mg/dl)", min_value=0.0, max_value=300.0, value=30.0, step=1.0)
+    
+    with col3:
+        pth = st.number_input("Parathyroid Hormone (PTH)", min_value=0.0, max_value=1000.0, value=40.0, step=1.0)
+
+    st.markdown("---")
+
+    # --- Section 3: Inflammation & History ---
+    st.subheader("3. Clinical History & Inflammation")
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        il6 = st.number_input("Interleukin-6 (IL-6)", min_value=0.0, max_value=200.0, value=2.0, step=0.1)
+        crp = st.number_input("CRP Level", min_value=0.0, max_value=200.0, value=1.0, step=0.1)
+    
+    with col2:
+        bp = st.number_input("Blood Pressure (mm/Hg)", min_value=50, max_value=250, value=120)
+        cad = st.selectbox("Coronary Artery Disease", options=["no", "yes"])
+    
+    with col3:
+        appetite = st.selectbox("Appetite", options=["good", "poor"])
 
     # Submit Button
     submitted = st.form_submit_button("🔍 Analyze Risk")
 
-# 4. Prediction Logic (Executed upon submission)
+# 4. Prediction Logic
 if submitted:
-    # Collect input data into a dictionary (matching exact column names used in training)
+    # Dictionary matching the EXACT Top 15 Feature Names
     input_data = {
-        'Sodium level (mEq/L)': sodium,
-        'Estimated Glomerular Filtration Rate (eGFR)': egfr,
-        'Blood urea (mg/dl)': urea,
-        'Potassium level (mEq/L)': potassium,
-        'Urine output (ml/day)': urine_output,
-        'White blood cell count (cells/cumm)': wbc,
-        'Serum creatinine (mg/dl)': creatinine,
-        'C-reactive protein (CRP) level': crp,
-        'Interleukin-6 (IL-6) level': il6,
-        'Parathyroid hormone (PTH) level': pth,
-        'Serum albumin level': albumin,
         'Urine protein-to-creatinine ratio': protein_ratio,
-        'Serum calcium level': calcium,
-        'Random blood glucose level (mg/dl)': glucose,
-        'Cystatin C level': cystatin
+        'Serum creatinine (mg/dl)': creatinine,
+        'Estimated Glomerular Filtration Rate (eGFR)': egfr,
+        'Cystatin C level': cystatin,
+        'Albumin in urine': albumin_urine,
+        'Interleukin-6 (IL-6) level': il6,
+        'Urinary sediment microscopy results': urine_sediment,
+        'Blood urea (mg/dl)': urea,
+        'Red blood cells in urine': rbc_urine,
+        'Parathyroid hormone (PTH) level': pth,
+        'Pus cells in urine': pus_cells,
+        'C-reactive protein (CRP) level': crp,
+        'Coronary artery disease (yes/no)': cad,
+        'Blood pressure (mm/Hg)': bp,
+        'Appetite (good/poor)': appetite
     }
 
     # Convert to DataFrame
     user_df = pd.DataFrame([input_data])
 
-    # Preprocess and align data with model features
-    clean_df = preprocess_data(user_df)
-    final_df = clean_df[feature_names]
+    try:
+        # Preprocess and align data
+        clean_df = preprocess_data(user_df)
+        final_df = clean_df[feature_names]
 
-    # Make Prediction
-    prediction = model.predict(final_df)
-    probability = model.predict_proba(final_df)[0][1] # Get confidence score
+        # Make Prediction
+        prediction = model.predict(final_df)
+        probability = model.predict_proba(final_df)[0][1] # Probability of Class 1 (Disease)
 
-    st.divider()
-    
-    if prediction[0] == 1:
-        st.error(f"⚠️ High Risk Detected! (Confidence: {probability:.1%})")
-        st.warning("Please consult a Nephrologist immediately.")
-    else:
-        st.success(f"✅ Low Risk - Results look normal. (Confidence: {(1-probability):.1%})")
+        st.divider()
+        
+        col_res1, col_res2 = st.columns([1, 3])
+        
+        with col_res1:
+            if prediction[0] == 1:
+                st.metric(label="Risk Level", value="High Risk ⚠️", delta="- Alert")
+            else:
+                st.metric(label="Risk Level", value="Low Risk ✅", delta="Normal")
+
+        with col_res2:
+            st.progress(float(probability))
+            if prediction[0] == 1:
+                st.error(f"**Potential Chronic Kidney Disease Detected** (Confidence: {probability:.1%})")
+                st.write("The model suggests a high likelihood of kidney issues based on the provided urine analysis and clinical markers.")
+            else:
+                st.success(f"**Results appear within normal range** (Confidence: {(1-probability):.1%})")
+                st.write("No significant signs of CKD detected based on the provided inputs.")
+
+    except Exception as e:
+        st.error(f"An error occurred during prediction: {e}")
